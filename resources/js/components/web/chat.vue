@@ -51,16 +51,13 @@ export default {
     }
     //Watchers
     watch(
-      () => {
-        form.room_id;
-      },
+      () => form.room_id,
       (value, oldValue) => {
         if (oldValue) {
           disconnect(oldValue);
         }
         connect();
-      },
-      { deep: true }
+      }
     );
     //Commons
     function connect() {
@@ -68,8 +65,8 @@ export default {
         getMessages();
         Echo.connector.options.auth.headers["Authorization"] =
           "Bearer " + TokenUtil.get();
+          
         window.Echo.private("chat." + form.room_id).listen(".private-chat-event", (e) => {
-            console.log(e)
           getMessages();
         });
       }

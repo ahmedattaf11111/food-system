@@ -4,16 +4,15 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreHelloRequest;
 use App\Http\Requests\UpdateHelloRequest;
+use App\Models\Hello;
 use App\Repositories\HelloRepository;
 use Illuminate\Support\Facades\Storage;
 
 class HelloController extends Controller
 {
-    private $helloRepository;
     public function __construct(HelloRepository $helloRepository)
     {
         $this->middleware('auth');
-        $this->helloRepository = $helloRepository;
     }
 
     //Dashboard endpoints
@@ -21,10 +20,10 @@ class HelloController extends Controller
     {
         $image = $request->file("image")->store("");
         $request->merge(["image" => $image]);
-        $employee = $this->helloRepository->store($request->input());
+        $employee = Hello::create($request->input());
         return $employee;
     }
-  
+
     public function update(UpdateHelloRequest $request)
     {
         $image = "";
@@ -32,7 +31,7 @@ class HelloController extends Controller
             $image = $request->file("image")->store("");
             $request->merge(["image" => $image]);
         }
-        $updateResult = $this->helloRepository->update($request->input());
+        $updateResult = $this->_update($request->input());
         if ($request->file("image")) {
             Storage::delete($updateResult["old_image"]);
         }
@@ -41,7 +40,7 @@ class HelloController extends Controller
 
     public function delete($id)
     {
-        $oldImage = $this->helloRepository->delete($id);
+        $oldImage = $this->_delete($id);
         if ($oldImage) {
             Storage::delete($oldImage);
         }
@@ -50,7 +49,31 @@ class HelloController extends Controller
     public function index()
     {
         $text = isset(request()->text) ? request()->text : '';
-        return $this->helloRepository->getPage(request()->page_size, $text);
+        return Hello::whereRaw('LOWER(`title_ar`) LIKE ? or LOWER(`title_en`) LIKE ?', [
+            "%" . strtolower($text) . '%',
+            "%" . strtolower($text) . '%',
+        ])->paginate(request()->page_size);
     }
-
+    //Commons    
+    public function _update($helloInput)
+    {
+        $hello = Hello::find($helloInput["id"]);
+        $oldImage = $hello->getImageName();
+        $hello->title_ar = $helloInput["title_ar"];
+        $hello->title_en = $helloInput["title_en"];
+        $hello->list = $helloInput["list"];
+        $hello->image = isset($helloInput["image"]) ? $helloInput["image"] : $oldImage;
+        $hello->save();
+        return ["old_image" => $oldImage, "updated_hello" => $hello];
+    }
+    public function _delete($id)
+    {
+        $hello = Hello::find($id);
+        $oldImage = null;
+        if ($hello) {
+            $oldImage = $hello->getImageName();
+            $hello->delete();
+        }
+        return $oldImage;
+    }
 }

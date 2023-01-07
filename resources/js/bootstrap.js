@@ -1,5 +1,6 @@
+window.$ = window.jQuery = require("jquery");
 window._ = require('lodash');
-window.$ = window.jQuery = require("../../public/assets/js/jquery-3.6.0.min.js");
+import TokenUtil from "./shared/utils/token-util";
 /**
  * We'll load the axios HTTP library which allows us to easily issue requests
  * to our Laravel back-end. This library automatically handles sending the
@@ -25,4 +26,9 @@ window.Echo = new Echo({
     key: process.env.MIX_PUSHER_APP_KEY,
     cluster: process.env.MIX_PUSHER_APP_CLUSTER,
     forceTLS: true,
+    auth: {
+        headers: {
+            "Authorization": 'Bearer ' + TokenUtil.get()
+        }
+    }
 });

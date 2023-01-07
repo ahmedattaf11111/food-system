@@ -7,9 +7,11 @@ use App\Http\Requests\ProfileRequest;
 use App\Http\Requests\RegisterRequest;
 use App\Http\Requests\ResetPassword;
 use App\Mail\EmailVerification;
+use App\Models\EmailVerification as EmailVerificationModel;
 use App\Mail\ForgetPassword;
+use App\Models\PasswordReset;
 use App\Models\User;
-use App\Repositories\AuthRepository;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -17,13 +19,10 @@ use Tymon\JWTAuth\Facades\JWTAuth;
 
 class AuthController extends Controller
 {
-    private $authRepository;
-
-    public function __construct(AuthRepository $authRepository)
+    public function __construct()
     {
         $this->middleware('auth', ['except' => ['login', 'register', 'forgetPassword', 'resetPassword']]);
         $this->middleware("verified", ["only" => ["userVerified"]]);
-        $this->authRepository = $authRepository;
     }
     public function verifyToken()
     {
@@ -40,9 +39,9 @@ class AuthController extends Controller
     }
     public function register(RegisterRequest $request)
     {
-        $user = $this->authRepository->create($request->input());
+        $user = User::create($request->input());
         $verificationCode = Str::random(5);
-        $this->authRepository->createEmailVerification([
+        $this->createEmailVerification([
             "email" => $request->email,
             "verification_code" => $verificationCode,
         ]);
@@ -52,7 +51,7 @@ class AuthController extends Controller
     public function verifyEmail(EmailVerificationRequest $request)
     {
         $authUserEmail = JWTAuth::parseToken()->getPayload()->get("email");
-        $verificationCodeValid = $this->authRepository
+        $verificationCodeValid = $this
             ->verifyUser($authUserEmail, $request->verification_code, 15);
         if (!$verificationCodeValid) {
             return response()->json(["errorMessage" => "Verification code is not valid"], 400);
@@ -62,7 +61,7 @@ class AuthController extends Controller
     {
         $authUserEmail = JWTAuth::parseToken()->getPayload()->get("email");
         $verificationCode = Str::random(5);
-        $this->authRepository->updateEmailVerification([
+        $this->updateEmailVerification([
             "email" => $authUserEmail,
             "verification_code" => $verificationCode,
         ]);
@@ -76,16 +75,16 @@ class AuthController extends Controller
     public function forgetPassword(User $user)
     {
         $token = Str::random(40);
-        $this->authRepository->insertResetPassword($user->email, $token);
+        $this->insertResetPassword($user->email, $token);
         Mail::to($user->email)->send(new ForgetPassword(['user' => $user, 'token' => $token]));
     }
     public function resetPassword(ResetPassword $request)
     {
-        $passwordReset = $this->authRepository->getPasswordReset($request->token, 15);
+        $passwordReset = $this->getPasswordReset($request->token, 15);
         if (empty($passwordReset)) {
             return response()->json(["error" => "Token isn't valid"], 400);
         }
-        $this->authRepository->changePassword($request->password, $passwordReset->email);
+        $this->changePassword($request->password, $passwordReset->email);
         $request->merge(["email" => $passwordReset->email]);
         return $this->login($request);
     }
@@ -104,7 +103,7 @@ class AuthController extends Controller
             $request->merge(["image" => $request->file("image")->store("")]);
         }
         $authUserId = JWTAuth::parseToken()->getPayload()->get("id");
-        $result = $this->authRepository->updateProfile($authUserId, $request->input());
+        $result = $this->_updateProfile($authUserId, $request->input());
         if ($request->file("image")) {
             Storage::delete($result["old_image"]);
         }
@@ -118,5 +117,74 @@ class AuthController extends Controller
             'token_type' => 'bearer',
             'expires_in' => auth()->factory()->getTTL() * 60
         ]);
+    }
+    public function createEmailVerification($emailVerification)
+    {
+        $emailVerification["created_at"] = Carbon::now();
+        EmailVerificationModel::create($emailVerification);
+    }
+    public function updateEmailVerification($emailVerification)
+    {
+        $_emailVerification = EmailVerificationModel::where("email", $emailVerification["email"])->first();
+        if ($_emailVerification) {
+            $_emailVerification->verification_code = $emailVerification["verification_code"];
+            $_emailVerification["created_at"] = Carbon::now();
+            $_emailVerification->save();
+        }
+    }
+    public function verifyUser($email, $verificationCode, $expirationTime)
+    {
+        $queryBuilder = EmailVerificationModel::where("email", $email)
+            ->where("verification_code", $verificationCode)
+            ->where('created_at', '>', Carbon::now()->subMinutes($expirationTime));
+        $emailVerification = $queryBuilder->first();
+        if ($emailVerification) {
+            $queryBuilder->delete();
+            $user = User::where("email", $email)->first();
+            $user->email_verified_at =  Carbon::now();
+            $user->save();
+        }
+        return $emailVerification;
+    }
+    public function insertResetPassword($email, $token)
+    {
+        $passwordReset = PasswordReset::where("email", $email)->first();
+        if ($passwordReset) {
+            $passwordReset->token = $token;
+            $passwordReset->created_at =  Carbon::now();
+            $passwordReset->save();
+        } else {
+            PasswordReset::insert(['email' => $email, 'token' => $token, 'created_at' => Carbon::now()]);
+        }
+        return $token;
+    }
+    public function getPasswordReset($token, $expirationTime)
+    {
+        $passwordReset = PasswordReset::where('token', $token)
+            ->where('created_at', '>', Carbon::now()->subMinutes($expirationTime))->first();
+        return $passwordReset;
+    }
+    public function changePassword($password, $email)
+    {
+        User::where('email', $email)
+            ->update(['password' => bcrypt($password)]);
+        PasswordReset::where('email', $email)->delete();
+    }
+    public function _updateProfile($id, $userInput)
+    {
+        $user = User::find($id);
+        $oldImage = $user->getImageName();
+        $user->first_name = $userInput["first_name"];
+        $user->last_name = $userInput["last_name"];
+        $user->phone = isset($userInput["phone"]) ? $userInput["phone"] : "";
+        $user->address = isset($userInput["address"]) ? $userInput["address"] : "";
+        $user->city = isset($userInput["city"]) ? $userInput["city"] : "";
+        $user->age = isset($userInput["age"]) ? $userInput["age"] : null;
+        $user->education = isset($userInput["education"]) ? $userInput["education"] : "";
+        $user->job = isset($userInput["job"]) ? $userInput["job"] : "";
+        $user->about_me = isset($userInput["about_me"]) ? $userInput["about_me"] : "";
+        $user->image = isset($userInput["image"]) ? $userInput["image"] : $oldImage;
+        $user->save();
+        return ["old_image" => $oldImage, "user" => $user];
     }
 }
