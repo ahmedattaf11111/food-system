@@ -5,7 +5,7 @@ namespace App\Models;
 use App\Commons\Traits\Image;
 use Illuminate\Database\Eloquent\Model;
 
-class Hello extends Model
+class Item extends Model
 {
     use Image;
     protected $guarded = [];

@@ -1,15 +1,15 @@
 <template>
   <div class="lang-container">
     <a href="" v-if="$i18n.locale == 'ar'" @click.prevent="changeLang('en')">
-      <img src="../../../../public/assets/images/english.png" />
+      <i class="fa fa-globe m-2"></i> English
     </a>
     <a href="" v-if="$i18n.locale == 'en'" @click.prevent="changeLang('ar')">
-      <img src="../../../../public/assets/images/arabic.png" />
+      <i class="fa fa-globe m-2"></i> عربى
     </a>
   </div>
 </template>
 <script>
-import LangUtil from '../utils/lang-util';
+import LangUtil from "../utils/lang-util";
 export default {
   setup() {
     const lang = LangUtil.setup();
@@ -25,6 +25,10 @@ export default {
   img {
     width: 20px;
     height: 15px;
+  }
+  a{
+    text-decoration: none;
+    color:#212529;
   }
 }
 </style>

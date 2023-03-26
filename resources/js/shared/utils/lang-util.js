@@ -28,8 +28,10 @@ export default {
             store.dir = locale.value == "ar" ? "rtl" : "ltr";
             if (lang == "ar") {
                 $("#body").attr("dir", "rtl");
+                // $("#bootstrap").attr("href", "/assets/bootstrap/bootstrap-rtl.css");
             } else if (lang == "en") {
                 $("#body").attr("dir", "ltr");
+                // $("#bootstrap").attr("href", "/assets/bootstrap/bootstrap.css");
             }
         }
         return { changeLang };

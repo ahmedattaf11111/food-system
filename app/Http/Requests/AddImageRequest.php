@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateHelloRequest extends FormRequest
+class AddImageRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,12 +24,8 @@ class UpdateHelloRequest extends FormRequest
     public function rules()
     {
         return [
-            "title_ar" => "required|unique:hellos,title_ar," . request()->id,
-            "title_en" => "required|unique:hellos,title_en," . request()->id,
-            "image" => "nullable|image",
-            "list" => "required|array|min:1",
-            "list.*.title_ar" => "required",
-            "list.*.title_en" => "required"
+            "id" => "required|numeric",
+            "image" => "required|image"
         ];
     }
 }

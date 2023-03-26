@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateHellosTable extends Migration
+class CreateAdminsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,12 +13,10 @@ class CreateHellosTable extends Migration
      */
     public function up()
     {
-        Schema::create('hellos', function (Blueprint $table) {
+        Schema::create('admins', function (Blueprint $table) {
             $table->id();
-            $table->string("title_ar")->nullable();
-            $table->string("title_en")->nullable();
-            $table->string("image")->nullable();
-            $table->json("list")->nullable();
+            $table->string('email')->nullable();
+            $table->string('password')->nullable();
             $table->timestamps();
         });
     }
@@ -30,6 +28,6 @@ class CreateHellosTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('hellos');
+        Schema::dropIfExists('admins');
     }
 }

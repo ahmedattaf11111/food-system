@@ -4,10 +4,7 @@
       <div class="row">
         <div class="logo mb-3 text-center">
           <router-link to="/home">
-            <img
-              class="border"
-              src="../../../../public/assets/images/logo.jpg"
-            />
+            <img class="border" src="../../../../public/assets/images/logo.jpg" />
           </router-link>
         </div>
         <!--Header-->
@@ -49,10 +46,7 @@
                 }"
               />
               <div class="invalid-feedback">
-                <div
-                  v-for="error in v$.password_confirmation.$errors"
-                  :key="error"
-                >
+                <div v-for="error in v$.password_confirmation.$errors" :key="error">
                   {{ $t("PASSWORD_CONFIRMATION") + " " + $t(error.$validator) }}
                 </div>
               </div>
@@ -89,10 +83,14 @@
   </div>
 </template>
 <script>
+import global from "../../shared/global.js";
+
 import strong from "../../shared/validators/strong-password-validator";
 import { required, sameAs } from "@vuelidate/validators";
 import useVuelidate from "@vuelidate/core";
 import authClient from "../../shared/http-clients/auth-client";
+import TokenUtil from "../../shared/utils/token-util";
+
 export default {
   setup() {
     return { v$: useVuelidate() };
@@ -112,7 +110,11 @@ export default {
       }
       authClient
         .resetPassword(this.getForm())
-        .then(() => {})
+        .then((response) => {
+          TokenUtil.set(response.data.access_token);
+          this.$router.push(global.AUTH_REDIRECT);
+          this.store.currentUser = TokenUtil.getUser();
+        })
         .catch((error) => {
           this.$toast.error(this.$t("TOKEN") + " " + this.$t("INVALID"));
         });
@@ -157,8 +159,7 @@ export default {
     }
   }
   .reset-password-box {
-    box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 3px 0px,
-      rgba(0, 0, 0, 0.06) 0px 1px 2px 0px;
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 3px 0px, rgba(0, 0, 0, 0.06) 0px 1px 2px 0px;
     @media (max-width: 767px) {
       //For small devices
       & {

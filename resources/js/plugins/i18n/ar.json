@@ -1,4 +1,6 @@
 {
+    "WELCOME_HERE": "اهلا بك هنا",
+    "CODE":"الكود",
     "REGISTER_NEW_ACCOUNT": "انشاء حساب جديد",
     "FIRST_NAME": "الاسم الاول",
     "LAST_NAME": "اسم العائلة",
@@ -48,6 +50,8 @@
     "NEXT":"التالي",
     "HELLO":"مرحبا",
     "HOME":"الرئيسية",
+    "ITEM":"الاصناف",
+    "MANY_IMAGE":"متعدد الصور",
     "DELETE_CONFIRMATION_HEADER":"تاكيد الحذف",
     "DELETE_CONFIRMATION_MESSAGE":"هل انت متاكد من انك تريد حذف هذا العنصر",
     "YES":"نعم",

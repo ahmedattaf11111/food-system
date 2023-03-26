@@ -1,8 +1,8 @@
 <template>
-  <div class="hello-form">
+  <div class="item-form">
     <div
       class="modal fade"
-      id="helloFormModal"
+      id="itemFormModal"
       tabindex="-1"
       aria-labelledby="exampleModalLabel"
       aria-hidden="true"
@@ -12,7 +12,7 @@
           <form @submit.prevent="save" enctype="multipart/form-data">
             <div class="modal-header">
               <h5 class="modal-title text-secondary" id="exampleModalLabel">
-                {{ $t("FORM") + " " + $t("HELLO") }}
+                {{ $t("FORM") + " " + $t("ITEM") }}
               </h5>
               <button
                 type="button"
@@ -33,7 +33,7 @@
                     <img
                       v-else
                       class="border-bottom"
-                      src="../../../../../public/assets/images/empty.jpg"
+                      src="/assets/images/empty.jpg"
                     />
                     <div class="image-upload">
                       <label class="icon" for="image">
@@ -111,13 +111,13 @@
                     <!--list-->
                     <div
                       class="list"
-                      v-for="(hello, index) in list"
+                      v-for="(item, index) in list"
                       :key="index"
                     >
-                      <div class="hello row">
+                      <div class="item row">
                         <div class="col-lg-12 d-flex justify-content-end">
                           <button
-                            @click="removeHello(index)"
+                            @click="removeItem(index)"
                             class="increments border"
                             type="button"
                           >
@@ -128,13 +128,13 @@
                           <div class="form-group">
                             <label>{{ $t("TITLE_AR") }}</label>
                             <input
-                              @input="hello.title_ar_dirty = true"
+                              @input="item.title_ar_dirty = true"
                               type="text"
                               class="form-control"
-                              v-model="hello.title_ar"
+                              v-model="item.title_ar"
                               :class="{
                                 'is-invalid':
-                                  hello.title_ar_dirty &&
+                                  item.title_ar_dirty &&
                                   v$.list.$each.$response.$errors[index]
                                     .title_ar.length,
                               }"
@@ -157,13 +157,13 @@
                           <div class="form-group">
                             <label>{{ $t("TITLE_EN") }}</label>
                             <input
-                              @input="hello.title_en_dirty = true"
+                              @input="item.title_en_dirty = true"
                               type="text"
                               class="form-control"
-                              v-model="hello.title_en"
+                              v-model="item.title_en"
                               :class="{
                                 'is-invalid':
-                                  hello.title_en_dirty &&
+                                  item.title_en_dirty &&
                                   v$.list.$each.$response.$errors[index]
                                     .title_en.length,
                               }"
@@ -186,7 +186,7 @@
                     </div>
                     <div class="col-12 d-flex justify-content-end">
                       <button
-                        @click="addHello"
+                        @click="addItem"
                         class="increments border"
                         type="button"
                       >
@@ -198,7 +198,7 @@
               </div>
             </div>
             <div class="modal-footer">
-              <button type="submit" class="btn btn-primary">
+              <button type="submit" class="btn btn-danger">
                 {{ $t("SUBMIT") }}
               </button>
               <button
@@ -219,13 +219,13 @@
 <script>
 import useVuelidate from "@vuelidate/core";
 import { required, helpers } from "@vuelidate/validators";
-import helloClient from "../../../shared/http-clients/hello-client";
+import itemClient from "../../../shared/http-clients/item-client";
 import { computed, inject, reactive, toRefs, watch } from "vue-demi";
 import { useI18n } from "vue-i18n";
 export default {
   setup(props, context) {
     const { t, locale } = useI18n({ useScope: "global" });
-    const hello_store = inject("hello_store");
+    const item_store = inject("item_store");
     const toast = inject("toast");
     const data = reactive({
       uploadedImage: null,
@@ -261,14 +261,14 @@ export default {
     }
     function deleteImage() {
       data.uploadedImage = null;
-      data.previewImage = props.selectedHello ? props.selectedHello.image : "";
+      data.previewImage = props.selectedItem ? props.selectedItem.image : "";
     }
 
-    function addHello() {
+    function addItem() {
       form.list.push(getElement());
     }
 
-    function removeHello(index) {
+    function removeItem(index) {
       if (form.list.length > 1) {
         form.list.splice(index, 1);
       }
@@ -279,7 +279,7 @@ export default {
         touchlist();
         return;
       }
-      if (!props.selectedHello) {
+      if (!props.selectedItem) {
         if (!data.uploadedImage) {
           toast.error(t("IMAGE") + " " + t("required"));
           return;
@@ -293,12 +293,12 @@ export default {
     function store() {
       data.titleArExist = false;
       data.titleEnExist = false;
-      helloClient
+      itemClient
         .store(getForm())
         .then((response) => {
           toast.success(t("CREATED_SUCCESSFULLY"));
           context.emit("created", response.data);
-          $("#helloFormModal").modal("hide");
+          $("#itemFormModal").modal("hide");
         })
         .catch((error) => {
           data.titleArExist = error.response.data.errors.title_ar
@@ -312,12 +312,12 @@ export default {
     function update() {
       data.titleArExist = false;
       data.titleEnExist = false;
-      helloClient
+      itemClient
         .update(getForm())
         .then((response) => {
           toast.success(t("UPDATED_SUCCESSFULLY"));
           context.emit("updated", response.data);
-          $("#helloFormModal").modal("hide");
+          $("#itemFormModal").modal("hide");
         })
         .catch((error) => {
           data.titleArExist = error.response.data.errors.title_ar
@@ -329,9 +329,9 @@ export default {
         });
     }
     function touchlist() {
-      form.list.forEach((hello) => {
-        hello.title_ar_dirty = true;
-        hello.title_en_dirty = true;
+      form.list.forEach((item) => {
+        item.title_ar_dirty = true;
+        item.title_en_dirty = true;
       });
     }
     function getElement() {
@@ -339,8 +339,8 @@ export default {
     }
     function getForm() {
       let formData = new FormData();
-      if (props.selectedHello) {
-        formData.append("id", props.selectedHello.id);
+      if (props.selectedItem) {
+        formData.append("id", props.selectedItem.id);
       }
       formData.append("title_ar", form.title_ar);
       formData.append("title_en", form.title_en);
@@ -351,19 +351,19 @@ export default {
       return formData;
     }
     function setlistToFormData(formData) {
-      form.list.forEach((hello, index) => {
-        formData.append(`list[${index}][title_ar]`, hello.title_ar);
-        formData.append(`list[${index}][title_en]`, hello.title_en);
+      form.list.forEach((item, index) => {
+        formData.append(`list[${index}][title_ar]`, item.title_ar);
+        formData.append(`list[${index}][title_en]`, item.title_en);
       });
     }
     function setForm() {
       v$.value.$reset();
-      form.list = props.selectedHello
-        ? _.clone(props.selectedHello.list)
+      form.list = props.selectedItem
+        ? _.clone(props.selectedItem.list)
         : [getElement()];
-      form.title_ar = props.selectedHello ? props.selectedHello.title_ar : "";
-      form.title_en = props.selectedHello ? props.selectedHello.title_en : "";
-      data.previewImage = props.selectedHello ? props.selectedHello.image : "";
+      form.title_ar = props.selectedItem ? props.selectedItem.title_ar : "";
+      form.title_en = props.selectedItem ? props.selectedItem.title_en : "";
+      data.previewImage = props.selectedItem ? props.selectedItem.image : "";
       data.uploadedImage = null;
       data.titleArExist = false;
       data.titleEnExist = false;
@@ -371,7 +371,7 @@ export default {
     //Watchers
     watch(
       () => {
-        hello_store.onFormShow;
+        item_store.onFormShow;
       },
       (value) => {
         setForm();
@@ -384,17 +384,17 @@ export default {
       v$,
       uploadImage,
       deleteImage,
-      addHello,
-      removeHello,
+      addItem,
+      removeItem,
       save,
     };
   },
-  props: ["selectedHello"],
+  props: ["selectedItem"],
 };
 </script>
 
 <style scoped lang="scss">
-.hello-form {
+.item-form {
   .form-control {
     padding: 10px;
   }
@@ -441,12 +441,14 @@ export default {
     }
   }
   .increments {
-    display: inline-block;
-    width: 30px;
+    font-size: 16px !important;
+    justify-content: center;
+    display: flex;
+    width: 37px;
     text-align: center;
     background-color: #f8f9fa;
     border-radius: 5px;
-    padding: 5px;
+    align-items: center;
   }
   .modal-footer {
     button {

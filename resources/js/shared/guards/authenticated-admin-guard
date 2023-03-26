@@ -1,0 +1,13 @@
+import TokenUtil from "../utils/token-util";
+import adminClient from '../http-clients/admin/admin-auth-client';
+import global from "../global";
+export default (to, from, next) => {
+    if (!TokenUtil.get()) {
+        next({ path: global.ADMIN_GUEST_REDIRECT })
+    }
+    else {
+        return adminClient.verifyToken()
+            .then(() => { next() })
+            .catch(() => { next({ path: global.ADMIN_GUEST_REDIRECT }) })
+    }
+}

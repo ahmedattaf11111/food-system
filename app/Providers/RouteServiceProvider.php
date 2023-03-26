@@ -26,8 +26,12 @@ class RouteServiceProvider extends ServiceProvider
      *
      * @var string|null
      */
-    protected $namespace = 'App\\Http\\Controllers';
-
+    const DEF_NAMESPACE = "App\\Http\\Controllers";
+    protected $namespace = self::DEF_NAMESPACE;
+    protected $modules = [
+        "admin" => self::DEF_NAMESPACE . "\\Admin",
+        "api" => self::DEF_NAMESPACE,
+    ];
     /**
      * Define your route model bindings, pattern filters, etc.
      *
@@ -36,18 +40,16 @@ class RouteServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->configureRateLimiting();
-
+        foreach ($this->modules as $name => $controller_namespace) {
+            $this->setApiModuleRoutes($name, $controller_namespace);
+        }
         $this->routes(function () {
-            Route::prefix('api')
-                ->middleware('api')
-                ->namespace($this->namespace)
-                ->group(base_path('routes/api.php'));
-
             Route::middleware('web')
                 ->namespace($this->namespace)
                 ->group(base_path('routes/web.php'));
         });
     }
+    //Commons
 
     /**
      * Configure the rate limiters for the application.
@@ -59,5 +61,13 @@ class RouteServiceProvider extends ServiceProvider
         RateLimiter::for('api', function (Request $request) {
             return Limit::perMinute(60)->by(optional($request->user())->id ?: $request->ip());
         });
+    }
+
+    protected function setApiModuleRoutes(string $module, string $namespace)
+    {
+        Route::prefix('api')
+            ->middleware('api')
+            ->namespace($namespace)
+            ->group(base_path("routes/$module.php"));
     }
 }

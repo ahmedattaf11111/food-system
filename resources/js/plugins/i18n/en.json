@@ -1,4 +1,8 @@
 {
+    "CODE":"Code",
+    "ITEM":"Items",
+    "MANY_IMAGE":"Many image",
+    "WELCOME_HERE": "Welcome here",
     "REGISTER_NEW_ACCOUNT": "Add New Account",
     "FIRST_NAME": "First Name",
     "LAST_NAME": "Last Name",

@@ -4,7 +4,7 @@
       theme="white-theme"
       :collapsed="collapsed"
       widthCollapsed="65px"
-      width="290px"
+      width="250px"
       :rtl="dir == 'rtl' ? true : false"
       :menu="menu"
       :hideToggle="hideToggle"
@@ -14,9 +14,11 @@
       :class="{ expandedMargin: !collapsed, collapsedMargin: collapsed }"
       class="content"
     >
-      <div class="simple-nav border-bottom">
-        <Lang />
-        <avatar class="avatar" />
+      <div class="simple-nav">
+        <ul>
+          <li><Lang /></li>
+          <li><avatar class="avatar" /></li>
+        </ul>
       </div>
       <router-view />
     </div>
@@ -50,24 +52,25 @@ export default {
       handler(value) {
         this.menu = [
           {
-            header: "Main Navigation",
+            header: this.$t("DASHBOARD"),
             hiddenOnCollapse: true,
           },
           {
-            href: "/home",
-            title: this.$t("HOME"),
-            icon: "fa fa-home",
+            href: "/admin/many-image",
+            title: this.$t("MANY_IMAGE"),
+            icon: "fa fa-chart-area",
           },
           {
-            href: "/hellos",
-            title: this.$t("HELLO"),
-            icon: "fa fa-user",
+            href: "/admin/items",
+            title: this.$t("ITEM"),
+            icon: "fa fa-chart-area",
           },
           {
             title: "Charts",
             icon: "fa fa-chart-area",
             child: [
               {
+            icon: "fa fa-chart-area",
                 href: "/charts/sublink",
                 title: "Sub Link",
               },
@@ -99,6 +102,35 @@ export default {
 </script>
 <style lang="scss">
 .dashboard-layout {
+  .v-sidebar-menu {
+    i.vsm--icon {
+      background: none !important;
+    }
+    .vsm--header {
+      text-align: center;
+    }
+    *,
+    .vsm--toggle-btn {
+      color: #bdbdc7 !important;
+    }
+    &,
+    .vsm--dropdown,
+    .vsm--toggle-btn {
+      background: #363a57 !important;
+    }
+    .vsm--link_open,
+    .vsm--link:hover {
+      background: #6d85fb !important;
+      * {
+        color: #fff !important;
+      }
+    }
+    .vsm--link_active {
+      * {
+        color: #fff !important;
+      }
+    }
+  }
   .avatar {
     margin-bottom: 5px;
   }
@@ -107,7 +139,7 @@ export default {
       border-right: 1px solid #dee2e6;
     }
     .expandedMargin {
-      margin-left: 290px;
+      margin-left: 250px;
     }
     .collapsedMargin {
       margin-left: 65px;
@@ -115,7 +147,7 @@ export default {
   }
   body[dir="rtl"] & {
     .expandedMargin {
-      margin-right: 290px;
+      margin-right: 250px;
     }
     .collapsedMargin {
       margin-right: 65px;
@@ -127,9 +159,20 @@ export default {
   .content {
     transition: 0.3s ease;
     .simple-nav {
-      padding: 10px;
       display: flex;
       justify-content: flex-end;
+      background: #ffffff;
+      z-index: 990;
+      box-shadow: 0 5px 20px rgb(0 0 0 / 10%);
+      ul {
+        list-style: none;
+        margin: 0;
+        padding: 15px;
+        li {
+          padding: 0 10px;
+          display: inline-block;
+        }
+      }
     }
   }
 }
