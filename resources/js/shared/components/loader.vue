@@ -1,11 +1,12 @@
 <template>
   <Loading
+    style="z-index: 9999"
     :color="color"
     :width="width"
     :height="height"
-    :active="showLoader"
+    :active="showLoader && !pendLoader"
     :can-cancel="canCancel"
-    :is-full-page="fullPage"  
+    :is-full-page="fullPage"
   ></Loading>
 </template>
 <script>
@@ -13,21 +14,21 @@ import { inject, toRefs } from "vue";
 import Loading from "vue-loading-overlay";
 import "vue-loading-overlay/dist/vue-loading.css";
 export default {
-  components:{
-    Loading
+  components: {
+    Loading,
   },
   setup() {
     return toRefs(inject("store"));
   },
-  data(){
+  props: ["color"],
+  data() {
     return {
-      color:"#2caae2",
-      width:80,
-      height:80,
-      canCancel:true,
-      fullPage:true
-    }
-  }
+      width: 80,
+      height: 80,
+      canCancel: true,
+      fullPage: true,
+    };
+  },
 };
 </script>
 

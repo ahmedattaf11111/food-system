@@ -23,18 +23,28 @@ export default {
         const { t, locale } = useI18n({ useScope: 'global' });
         const store = inject("store");
         const self = this;
-        function changeLang(lang) {
+        function changeAdminLang(lang) {
             self.set(locale.value = lang);
             store.dir = locale.value == "ar" ? "rtl" : "ltr";
-            if (lang == "ar") {
-                $("#body").attr("dir", "rtl");
-                // $("#bootstrap").attr("href", "/assets/bootstrap/bootstrap-rtl.css");
-            } else if (lang == "en") {
-                $("#body").attr("dir", "ltr");
-                // $("#bootstrap").attr("href", "/assets/bootstrap/bootstrap.css");
-            }
+            store.showPageLoader = true;
+            setTimeout(() => {
+                if (lang == "ar") {
+                    $("#body").attr("dir", "rtl");
+                    $("#core").attr("href", "/vendors/styles/core-rtl.css");
+                    $("#style").attr("href", "/vendors/styles/style-rtl.css");
+
+
+                } else if (lang == "en") {
+                    $("#body").attr("dir", "ltr");
+                    $("#core").attr("href", "/vendors/styles/core.css");
+                    $("#style").attr("href", "/vendors/styles/style.css");
+                }
+            }, 500)
+            setTimeout(() => {
+                store.showPageLoader = false;
+            }, 2000)
         }
-        return { changeLang };
+        return { changeAdminLang };
     }
 
 }

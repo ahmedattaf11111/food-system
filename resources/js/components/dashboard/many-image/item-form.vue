@@ -61,6 +61,7 @@
               <button type="button" class="btn btn-secondary" data-dismiss="modal">
                 {{ $t("CLOSE") }}
               </button>
+              
             </div>
           </form>
         </div>
@@ -70,7 +71,7 @@
 </template>
 
 <script>
-import manyImageClient from "../../../shared/http-clients/many-image-client";
+import manyImageClient from "../../../http-clients/admin/many-image-client";
 import { inject, reactive, toRefs, watch } from "vue-demi";
 import { useI18n } from "vue-i18n";
 export default {

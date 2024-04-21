@@ -2,11 +2,14 @@
 
 namespace App\Providers;
 
+use App\Events\LocationEvent;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 use App\Events\NewChatMessage;
+use App\Listeners\LocationEventListener;
 use App\Listeners\SendChatMessageNotification;
+use App\Listeners\UserEventSubscriber;
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -20,7 +23,7 @@ class EventServiceProvider extends ServiceProvider
             SendEmailVerificationNotification::class,
         ],
         NewChatMessage::class =>
-        [SendChatMessageNotification::class]
+        [SendChatMessageNotification::class],
     ];
 
     /**

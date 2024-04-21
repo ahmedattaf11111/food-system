@@ -2,55 +2,64 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Admin</title>
-    <link rel="icon" type="image/png" sizes="32x32" href="/assets/images/logo.jpg" />
-    <link rel="icon" type="image/png" sizes="16x16" href="/assets/images/logo.jpg" />
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="{{ mix('css/bootstrap.min.css') }}" />
-    <link rel="stylesheet" type="text/css" href="https://www.fontstatic.com/f=hanimation" />
+    <!-- Basic Page Info -->
+    <meta charset="utf-8">
+    <title>Grostore</title>
+
+    <!-- Site favicon -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/admin-logo.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/images/admin-logo.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/images/admin-logo.png">
+
+    <!-- Mobile Specific Metas -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- CSS -->
+    <link rel="stylesheet" id="core" type="text/css" href="/vendors/styles/core.css">
+    <link rel="stylesheet" id="icon" type="text/css" href="/vendors/styles/icon-font.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Readex+Pro:wght@200;300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="/src/plugins/dropzone/src/dropzone.css">
+    <link rel="stylesheet" id="style" type="text/css" href="/vendors/styles/style.css">
+
+    <!-- Global site tag (gtag.js) - Google Analytics -->
     <style>
-        *:not(.fa, i),
-        h1,
-        h2,
-        h3,
-        h4,
-        h5,
-        h6 {
-            font-family: 'hanimation' !important;
-            color: #373757;
+        .footer-wrap {
+            background: #fff;
+            border-radius: 5px;
         }
 
-        .invalid-feedback * {
-            color: #dc3545;
+        .header {
+            /* #dfe3e8 */
+            box-shadow: 0 0 0px rgba(0, 0, 0, 0) !important;
+            border-bottom: 1px solid #d4d4d4;
         }
 
-        * {
-            font-size: 15px !important;
-        }
-
-        body {
-            margin: 0;
-            background: rgba(88, 115, 254, 0.04);
+        .swal2-styled {
+            width: 54px;
+            margin: 0 5px !important;
+            text-align: center;
         }
 
         /* width */
         ::-webkit-scrollbar {
-            width: 7px;
-            height: 7px;
+            width: 3px;
+            height: 3px;
         }
 
         /* Track */
         ::-webkit-scrollbar-track {
-            background: #f1f1f1
+            background: transparent;
         }
 
         /* Handle */
         ::-webkit-scrollbar-thumb {
-            background: #888;
-            border-radius: 5px;
+            background: #919eab;
+        }
+
+        .sidebarscroll::-webkit-scrollbar-thumb {
+            background: #919eab;
 
         }
 
@@ -58,7 +67,43 @@
         ::-webkit-scrollbar-thumb:hover {
             background: #555;
         }
-   </style>
+
+        .sidebarscroll::-webkit-scrollbar-thumb:hover {
+            background: #919eab;
+        }
+
+        .swal2-cancel,
+        .swal2-confirm {
+            background: #f4f6f8 !important;
+            color: #545454 !important;
+            border: 1px solid #dee2e6 !important;
+            font-size: 14px !important;
+        }
+
+        .toast-content * {
+            font-size: 14px !important;
+        }
+
+        .swal2-confirm {
+            justify-content: center;
+            display: flex !important;
+        }
+
+        .swal2-popup * {
+            font-size: 14px !important;
+        }
+    </style>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-119386393-1"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+
+        function gtag() {
+            dataLayer.push(arguments);
+        }
+        gtag('js', new Date());
+
+        gtag('config', 'UA-119386393-1');
+    </script>
 </head>
 
 <body id="body" dir="ltr">
@@ -68,9 +113,14 @@
         <app></app>
     </div>
     <script src="{{ mix('js/app.js') }}"></script>
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <script src="/vendors/scripts/core.js"></script>
+    <script src="/vendors/scripts/script.min.js"></script>
+    <!-- <script src="/vendors/scripts/process.js"></script> -->
+    <!-- <script src="/vendors/scripts/layout-settings.js"></script> -->
+    <!-- <script src="/src/plugins/apexcharts/apexcharts.min.js"></script> -->
+    <!-- <script src="/vendors/scripts/dashboard.js"></script> -->
+    <script src="/src/plugins/dropzone/src/dropzone.js"></script>
+
 </body>
 
 </html>

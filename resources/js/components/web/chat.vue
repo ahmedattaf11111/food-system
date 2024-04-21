@@ -24,7 +24,7 @@
 
 <script>
 import { reactive, toRefs, watch } from "vue-demi";
-import chatClient from "../../shared/http-clients/chat-client";
+import chatClient from "../../http-clients/web/chat-client";
 import TokenUtil from "../../shared/utils/token-util";
 import tokenUtil from "../../shared/utils/token-util";
 export default {

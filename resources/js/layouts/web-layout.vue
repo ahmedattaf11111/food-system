@@ -1,26 +1,31 @@
 <template>
   <div>
-    <div class="simple-nav">
-    </div>
     <router-view />
   </div>
 </template>
 <script>
+import { inject, onMounted } from "vue";
+import authClient from "../http-clients/web/auth-client";
 import TokenUtil from "../shared/utils/token-util";
+
 export default {
-  components: {
-  },
-  data() {
-    return {
-      token: TokenUtil.get(),
-    };
+  components: {},
+  setup() {
+    const store = inject("store");
+    onMounted(() => {
+      // if (TokenUtil.get()) {
+      //   authClient
+      //     .getCurrentUser()
+      //     .then((response) => {
+      //       store.currentUser = response.data;
+      //     })
+      //     .catch((error) => {
+      //       console.log("err", error.response);
+      //     });
+      // }
+    });
   },
 };
 </script>
 <style scoped>
-.simple-nav {
-  padding: 10px;
-  display: flex;
-  justify-content: flex-end;
-}
 </style>

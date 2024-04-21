@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\AddImageRequest;
-use App\Http\Requests\CreateManyImageRequest;
+use App\Http\Requests\Admin\AddImageRequest;
+use App\Http\Requests\Admin\CreateManyImageRequest;
 use App\Models\ManyImage;
 use Illuminate\Support\Facades\Storage;
 

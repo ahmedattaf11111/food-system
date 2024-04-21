@@ -1,5 +1,5 @@
 import TokenUtil from "../utils/token-util";
-import adminClient from '../http-clients/admin/admin-auth-client';
+import adminClient from '../../http-clients/admin/admin-auth-client';
 import global from "../global";
 export default (to, from, next) => {
     if (!TokenUtil.get()) {

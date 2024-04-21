@@ -20,7 +20,14 @@
         "sass-loader": "^13.0.2"
     },
     "dependencies": {
+        "@ckeditor/ckeditor5-build-classic": "^39.0.1",
+        "@ckeditor/ckeditor5-vue": "^5.1.0",
         "@meforma/vue-toaster": "^1.3.0",
+        "@popperjs/core": "^2.11.8",
+        "@tiptap/pm": "^2.1.6",
+        "@tiptap/starter-kit": "^2.1.6",
+        "@tiptap/vue-3": "^2.1.6",
+        "@vueform/multiselect": "^2.6.2",
         "@vuelidate/core": "^2.0.0-alpha.43",
         "@vuelidate/validators": "^2.0.0-alpha.31",
         "autoprefixer": "10.4.5",
@@ -35,8 +42,14 @@
         "vue-loading-overlay": "^5.0.3",
         "vue-router": "^4.1.3",
         "vue-sidebar-menu": "^5.2.4",
+        "vue-sweetalert2": "^5.0.5",
+        "vue3-carousel": "^0.3.1",
+        "vue3-dropzone": "^2.0.1",
         "vue3-loading-overlay": "0.0.0",
         "vue3-print-nb": "^0.1.4",
-        "vuejs-paginate-next": "^1.0.2"
+        "vue3-toastify": "^0.1.11",
+        "vuejs-paginate-next": "^1.0.2",
+        "vxe-table": "^4.5.17",
+        "xe-utils": "^3.5.14"
     }
 }

@@ -1,130 +1,238 @@
 <template>
-  <div class="p-3 item-container">
-    <DeleteConfirmation @confirm="deleteItem" @closed="selectedItem = null" />
-    <ItemForm @created="onCreated" @updated="onUpdated" :selectedItem="selectedItem" />
-    <div class="header">
-      <h2 class="welcome">
-        <b>{{ $t("ITEM") }}</b
-        >, {{ $t("WELCOME_HERE") }}
-      </h2>
-      <div class="title">
-        <router-link to="/admin-panel-settings">{{ $t("HOME") }}</router-link>
-        /
-        <span>{{ $t("ITEM") }}</span>
+  <div class="item-container">
+    <ItemForm
+      @created="onCreated"
+      @updated="onUpdated"
+      :selectedItem="selectedItem"
+    />
+    <div class="page-header">
+      <div class="row">
+        <div class="col-md-6 col-sm-12">
+          <div class="title">
+            <h4>{{ $t("ITEM") }}</h4>
+          </div>
+          <nav aria-label="breadcrumb" role="navigation">
+            <ol class="breadcrumb">
+              <li class="breadcrumb-item">
+                <router-link to="/">{{ $t("HOME") }}</router-link>
+              </li>
+              <li class="breadcrumb-item active" aria-current="page">
+                {{ $t("ITEM") }}
+              </li>
+            </ol>
+          </nav>
+        </div>
+        <div class="col-md-6 col-sm-12 text-right">
+          <div class="dropdown">
+            <a
+              class="btn btn-primary dropdown-toggle"
+              href="#"
+              role="button"
+              data-toggle="dropdown"
+            >
+              {{ `${getMounthName()} ${new Date().getFullYear()}` }}
+            </a>
+            <div class="dropdown-menu dropdown-menu-right">
+              <a
+                @click.prevent="downloadExcelFile"
+                class="dropdown-item"
+                href=""
+                >{{ $t("EXCEL") }}</a
+              >
+              <a @click.prevent="print" class="dropdown-item" href="">{{
+                $t("PRINT")
+              }}</a>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
-    <div class="px-4">
-      <div class="table-container">
-          <div class="table-responsive">
-            <div class="controls">
-              <div class="search">
+    <div class="pd-20 bg-white border-radius-4 box-shadow mb-30">
+      <div class="">
+        <div class="table-container">
+          <div class="controls">
+            <h5 class="table-header">{{ $t("Data Table Simple") }}</h5>
+            <div class="d-flex options">
+              <div>{{ $t("you can add more entries") }}</div>
+              <a
+                @click.prevent="onAddClicked()"
+                data-toggle="modal"
+                data-target="#itemFormModal"
+                class="outer"
+              >
+                {{ $t("CLICK_HERE") }}
+              </a>
+            </div>
+            <div class="d-flex justify-content-between pageSize">
+              <div class="d-flex">
+                <span>{{ $t("SHOW") }}</span>
+                <select
+                  v-model="pageSize"
+                  @change="onPageSizeChanged"
+                  style="height: 39px; width: 61px"
+                  class="custom-select"
+                >
+                  <option value="10">10</option>
+                  <option value="20">20</option>
+                  <option value="30">30</option>
+                </select>
+                <span>{{ $t("ENTRIES") }}</span>
+              </div>
+              <div class="search d-flex">
+                <label>{{ $t("SEARCH") }} : </label>
                 <input
+                  style="width: 220px"
+                  class="form-control"
                   v-model="text"
                   type="text"
                   :placeholder="$t('SEARCH')"
                   ref="search"
                 />
-                <i class="fa fa-search"></i>
-              </div>
-              <div class="actions my-2">
-                <button
-                  @click="onAddClicked()"
-                  data-toggle="modal"
-                  data-target="#itemFormModal"
-                  class="border text-secondary"
-                >
-                  <i class="fa fa-plus" aria-hidden="true"></i>
-                </button>
-                <button @click="downloadExcelFile" class="border text-secondary">
-                  <i class="fa fa-download" aria-hidden="true"></i>
-                </button>
-                <button @click="print" class="border text-secondary">
-                  <i class="fa fa-print" aria-hidden="true"></i>
-                </button>
               </div>
             </div>
-            <table id="printMe" class="table">
+          </div>
+          <div class="table-responsive">
+            <table class="table table-striped" id="printMe">
               <thead>
                 <tr>
-                  <th scope="col">{{ $t("IMAGE") }}</th>
-                  <th scope="col">{{ $t("TITLE") }}</th>
-                  <th scope="col">{{ $t("TITLE") }}</th>
-                  <th class="actions-header" scope="col">{{ $t("ACTIONS") }}</th>
+                  <th scope="col">{{ $t("NAME_AR") }}</th>
+                  <th scope="col">{{ $t("NAME_EN") }}</th>
+                  <th class="actions-header" scope="col">
+                    {{ $t("ACTIONS") }}
+                  </th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody v-if="items.length">
                 <tr v-for="(item, index) in items" :key="item.id">
-                  <td><img :src="item.image" /></td>
-                  <td>{{ item.title_ar }}</td>
-                  <td>{{ item.title_en }}</td>
+                  <td>{{ item.name_ar }}</td>
+                  <td>{{ item.name_en }}</td>
+
                   <td class="actions-cell">
-                    <div class="actions">
-                      <button
-                        @click="onEditClicked(item)"
-                        data-toggle="modal"
-                        data-target="#itemFormModal"
-                        class="border text-secondary"
+                    <div class="dropdown">
+                      <a
+                        class="btn"
+                        href="#"
+                        role="button"
+                        data-toggle="dropdown"
                       >
-                        <i class="fa fa-edit" aria-hidden="true"></i>
-                      </button>
-                      <button
-                        @click="onDeleteClicked(item)"
-                        data-toggle="modal"
-                        data-target="#deleteConfirmationModal"
-                        class="border text-secondary"
-                      >
-                        <i class="fa fa-trash" aria-hidden="true"></i>
-                      </button>
+                        <i class="dw dw-more"></i>
+                      </a>
+                      <div class="dropdown-menu dropdown-menu-left">
+                        <a
+                          @click.prevent="onEditClicked(item)"
+                          data-toggle="modal"
+                          data-target="#itemFormModal"
+                          class="dropdown-item"
+                          href=""
+                          >{{ $t("EDIT") }}</a
+                        >
+                        <a
+                          @click.prevent="onDeleteClicked(item)"
+                          data-toggle="modal"
+                          data-target="#deleteConfirmationModal"
+                          class="dropdown-item"
+                          href=""
+                          >{{ $t("DELETE") }}</a
+                        >
+                      </div>
                     </div>
+                  </td>
+                </tr>
+              </tbody>
+              <tbody v-else>
+                <tr>
+                  <td
+                    class="text-center"
+                    style="padding: 15px !important"
+                    colspan="120"
+                  >
+                    {{ $t("NO_DATA") }}
                   </td>
                 </tr>
               </tbody>
             </table>
           </div>
-        <div class="mt-1">
-          <paginate
-            v-model="page"
-            :pageCount="pageCounts"
-            :clickHandler="getItems"
-            :prevText="$t('PREV')"
-            :nextText="$t('NEXT')"
+          <div
+            v-if="items.length"
+            class="page-container d-flex justify-content-between"
           >
-          </paginate>
+            <div class="entries">
+              {{ pageSize * (page - 1) + 1 }} -
+              {{ (page - 1) * pageSize + items.length }} {{ $t("OF") }}
+              {{ totalItems }} {{ $t("ENTRIES") }}
+            </div>
+            <div>
+              <paginate
+                v-model="page"
+                :pageCount="pageCounts"
+                :clickHandler="getItems"
+                :prevText="
+                  $i18n.locale == 'en'
+                    ? `<i class='ion-chevron-left'></i>`
+                    : `<i class='ion-chevron-right'></i>`
+                "
+                :nextText="
+                  $i18n.locale == 'en'
+                    ? `<i class='ion-chevron-right'></i>`
+                    : `<i class='ion-chevron-left'></i>`
+                "
+              >
+              </paginate>
+            </div>
+          </div>
         </div>
       </div>
     </div>
   </div>
 </template>
 <script>
-import itemClient from "../../../shared/http-clients/item-client";
+import itemClient from "../../../http-clients/admin/item-client";
 import Paginate from "vuejs-paginate-next";
 import exportFromJSON from "export-from-json";
-import DeleteConfirmation from "../../../shared/components/delete-confirmation.vue";
-import ItemForm from "./item-form.vue";
-import itemStore from "./item-store";
+import ItemForm from "../tax/item-form.vue";
+import itemStore from "../tax/item-store";
 import { inject, provide, reactive, ref, toRefs, watch } from "vue-demi";
 import { useI18n } from "vue-i18n";
 export default {
   components: {
     Paginate,
-    DeleteConfirmation,
     ItemForm,
   },
   setup() {
     const data = reactive({
-      pageSize: 6,
+      pageSize: 10,
       page: 1,
+      totalItems: 0,
       items: [],
       text: "",
       pageCounts: 0,
       timeout: null,
       selectedItem: null,
+      monthNames: [
+        "January",
+        "February",
+        "March",
+        "April",
+        "May",
+        "June",
+        "July",
+        "August",
+        "September",
+        "October",
+        "November",
+        "December",
+      ],
     });
     const toast = inject("toast");
+    const swal = inject("swal");
     const { t, locale } = useI18n({ useScope: "global" });
     provide("item_store", itemStore);
     created();
     //Methods
+    function getMounthName() {
+      let date=new Date();
+      return data.monthNames[date.getMonth()];
+    }
     function onAddClicked() {
       data.selectedItem = null;
       //Make little delay to ensure that watcher that found in item form component
@@ -143,6 +251,24 @@ export default {
     }
     function onDeleteClicked(item) {
       data.selectedItem = item;
+      swal
+        .fire({
+          title: t("Are you sure"),
+          text: t("You will not be able to revert this"),
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonText: t("YES"),
+          cancelButtonText: t("NO"),
+        })
+        .then((res) => {
+          if (res.value) {
+            deleteItem();
+          }
+        });
+    }
+    function onPageSizeChanged() {
+      data.page = 1;
+      getItems();
     }
     function getItems() {
       itemClient
@@ -150,6 +276,7 @@ export default {
         .then((response) => {
           data.items = response.data.data;
           data.pageCounts = Math.ceil(response.data.total / data.pageSize);
+          data.totalItems = response.data.total;
         })
         .catch((error) => {
           console.log(error.response);
@@ -177,12 +304,16 @@ export default {
       itemClient
         .delete(data.selectedItem.id)
         .then((response) => {
-          toast.success(t("DELETED_SUCCESSFULLY"));
-          if (data.page > 1 && data.items.length==1) {
+          swal({
+            confirmButtonText: t("OK"),
+            icon: "success",
+            title: t("SUCCESS"),
+            text: t("DELETED_SUCCESSFULLY"),
+          });
+          if (data.page > 1 && data.items.length == 1) {
             data.page--;
           }
           getItems();
-          data.selectedItem = null;
         })
         .catch((error) => {});
     }
@@ -209,6 +340,8 @@ export default {
     }
     return {
       ...toRefs(data),
+      getMounthName,
+      onPageSizeChanged,
       onAddClicked,
       onEditClicked,
       onDeleteClicked,
@@ -225,6 +358,20 @@ export default {
 </script>
 
 <style lang="scss">
+body[dir="rtl"] {
+  .actions-cell .dropdown-menu {
+    position: absolute !important;
+    transform: translate3d(103px, -43px, 0px) !important;
+    top: 0px !important;
+    left: 0px !important;
+    width:100px;
+    will-change: transform !important;
+  }
+  .breadcrumb-item + .breadcrumb-item::before {
+    font-family: "FontAwesome";
+    content: "\f104" !important;
+  }
+}
 @media print {
   body * {
     visibility: hidden;
@@ -244,109 +391,66 @@ export default {
   }
 }
 .item-container {
-  td {
-    img {
-      width: 70px;
-      height: 70px;
-      border-radius: 3px;
-      padding: 5px;
-      box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px,
-        rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
-    }
-  }
-  .header {
-    * {
-      font-size: 17px !important;
-    }
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    padding: 30px;
-    .welcome {
-      padding-top: 9px;
-    }
-    .title {
-      * {
-        color: #6c757d !important;
-      }
-      a {
-        text-decoration: none;
-        color: #868e96 !important;
-        &:hover {
-          color: #6c757d !important;
-        }
-      }
-    }
-  }
-  .table-container {
-    background: #ffffff;
-    box-shadow: 0 5px 20px rgb(0 0 0 / 10%);
-    padding: 30px;
-    .controls {
-      display: flex;
-      justify-content: space-between;
-      @media (max-width: 500px) {
-        flex-direction: column;
-      }
-      body[dir="ltr"] & {
-        .search {
-          i {
-            right: 25px;
-          }
-        }
-      }
-      body[dir="rtl"] & {
-        .search {
-          i {
-            left: 25px;
-          }
-        }
-      }
-      .search {
-        margin-bottom: 10px;
-        i {
-          position: relative;
-          top: 1px;
-          color: #888888;
-        }
-        input {
-          padding: 4px 15px;
-          border: 1px solid #dee2e6 !important;
-          border-radius: 5px;
-        }
-      }
-    }
-    .actions {
-      display: flex;
-      a:hover {
-        cursor: text;
-      }
-      button {
-        width: 34px;
-        height: 34px;
-        background: none;
-        margin: 3px 5px;
-        border-radius: 5px;
-      }
-    }
-    a:hover {
+  .options {
+    margin: 9px 0 20px 0px;
+    align-items: center;
+    a.outer {
+      margin: 0 6px;
       cursor: pointer;
+      color: #1b00ff;
     }
-    .active {
-      a {
-        color: #fff !important;
-        background-color: #6d85fb !important;
-        border-color: #dbdbdb !important;
-      }
+  }
+  .page-container {
+    .entries {
+      margin-top: 10px;
     }
-    .page-link {
-      padding: 3px 18px !important;
+  }
+  .page-link {
+    padding: 0.4rem 0.75rem !important;
+  }
+  .table {
+    td {
+      padding: 0 1rem !important;
     }
-    table {
-      td,
-      th {
-        width: 25%;
-      }
+    th,
+    td {
+      white-space: nowrap;
+    }
+  }
+  .actions-cell .dropdown .btn {
+    color: #1b00ff;
+    font-size: 23px;
+  }
+  .table-header {
+    color: #1b00ff;
+  }
+  .form-control {
+    height: 40px !important;
+  }
+  .pageSize {
+    flex-direction: nowrap;
+    margin: 11px 0px 15px 0;
+    span {
+      position: relative;
+      top: 6px;
+    }
+    select {
+      margin: 0 5px;
+    }
+  }
+  .search {
+    label {
+      margin: 0 5px;
+      position: relative;
+      top: 7px;
+    }
+  }
+  @media (max-width: "660px") {
+    .pageSize {
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      margin: 11px 0px 15px 0;
     }
   }
 }

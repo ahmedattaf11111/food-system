@@ -69,7 +69,7 @@
   </div>
 </template>
 <script>
-import manyImageClient from "../../../shared/http-clients/many-image-client";
+import manyImageClient from "../../../http-clients/admin/many-image-client";
 import Paginate from "vuejs-paginate-next";
 import exportFromJSON from "export-from-json";
 import DeleteConfirmation from "../../../shared/components/delete-confirmation.vue";
@@ -217,136 +217,6 @@ export default {
     position: absolute;
     top: 0;
     left: 0;
-  }
-}
-
-.item-container {
-  td {
-    img {
-      width: 70px;
-      height: 70px;
-      border-radius: 3px;
-      padding: 5px;
-      box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px,
-        rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
-    }
-  }
-
-  .header {
-    * {
-      font-size: 17px !important;
-    }
-
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    padding: 30px;
-
-    .welcome {
-      padding-top: 9px;
-    }
-
-    .title {
-      * {
-        color: #6c757d !important;
-      }
-
-      a {
-        text-decoration: none;
-        color: #868e96 !important;
-
-        &:hover {
-          color: #6c757d !important;
-        }
-      }
-    }
-  }
-
-  .table-container {
-    background: #ffffff;
-    box-shadow: 0 5px 20px rgb(0 0 0 / 10%);
-    padding: 30px;
-
-    .controls {
-      display: flex;
-      justify-content: space-between;
-
-      @media (max-width: 500px) {
-        flex-direction: column;
-      }
-
-      body[dir="ltr"] & {
-        .search {
-          i {
-            right: 25px;
-          }
-        }
-      }
-
-      body[dir="rtl"] & {
-        .search {
-          i {
-            left: 25px;
-          }
-        }
-      }
-
-      .search {
-        margin-bottom: 10px;
-
-        i {
-          position: relative;
-          top: 1px;
-          color: #888888;
-        }
-
-        input {
-          padding: 4px 15px;
-          border: 1px solid #dee2e6 !important;
-          border-radius: 5px;
-        }
-      }
-    }
-
-    .actions {
-      display: flex;
-
-      a:hover {
-        cursor: text;
-      }
-
-      button {
-        width: 34px;
-        height: 34px;
-        background: none;
-        margin: 3px 5px;
-        border-radius: 5px;
-      }
-    }
-
-    a:hover {
-      cursor: pointer;
-    }
-
-    .active {
-      a {
-        color: #fff !important;
-        background-color: #6d85fb !important;
-        border-color: #dbdbdb !important;
-      }
-    }
-
-    .page-link {
-      padding: 3px 18px !important;
-    }
-
-    table {
-
-      td,
-      th {
-        width: 25%;
-      }
-    }
   }
 }
 </style>

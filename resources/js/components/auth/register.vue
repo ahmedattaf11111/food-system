@@ -146,7 +146,7 @@
 import strong from "../../shared/validators/strong-password-validator";
 import { required, email, sameAs } from "@vuelidate/validators";
 import useVuelidate from "@vuelidate/core";
-import authClient from "../../shared/http-clients/auth-client";
+import authClient from "../../http-clients/web/auth-client";
 import global from "../../shared/global";
 import TokenUtil from "../../shared/utils/token-util";
 export default {

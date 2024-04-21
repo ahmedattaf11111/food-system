@@ -30,7 +30,7 @@ class RouteServiceProvider extends ServiceProvider
     protected $namespace = self::DEF_NAMESPACE;
     protected $modules = [
         "admin" => self::DEF_NAMESPACE . "\\Admin",
-        "api" => self::DEF_NAMESPACE,
+        "web-api" => self::DEF_NAMESPACE . "\\Web",
     ];
     /**
      * Define your route model bindings, pattern filters, etc.

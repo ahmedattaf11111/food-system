@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\StoreItemRequest;
-use App\Http\Requests\UpdateItemRequest;
+use App\Http\Requests\Admin\StoreItemRequest;
+use App\Http\Requests\Admin\UpdateItemRequest;
 use App\Models\Item;
 use Illuminate\Support\Facades\Storage;
 
@@ -50,7 +50,7 @@ class ItemController extends Controller
     {
         $text = isset(request()->text) ? request()->text : '';
         if (request()->page_size) {
-            return Item::whereRaw('LOWER(`title_ar`) LIKE ? or LOWER(`title_en`) LIKE ?', [
+            return Item::whereRaw('LOWER(`name_ar`) LIKE ? or LOWER(`name_en`) LIKE ?', [
                 "%" . strtolower($text) . '%',
                 "%" . strtolower($text) . '%',
             ])->orderBy("id", "desc")->paginate(request()->page_size);

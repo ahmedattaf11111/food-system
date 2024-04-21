@@ -29,9 +29,11 @@
   </div>
 </template>
 <script>
-import authAdminClient from "../../shared/http-clients/admin/admin-auth-client";
+import authAdminClient from "../../http-clients/admin/admin-auth-client";
+
 import global from "../../shared/global";
 import TokenUtil from "../../shared/utils/token-util";
+
 import { inject, toRefs, ref } from "vue-demi";
 export default {
   setup() {
